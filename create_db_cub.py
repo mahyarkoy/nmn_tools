@@ -17,10 +17,10 @@ classes_path = '/media/evl/Public/Mahyar/Data/CVPRdata/CUB_200_2011/CUB_200_2011
 im_class_path = '/media/evl/Public/Mahyar/Data/CVPRdata/CUB_200_2011/CUB_200_2011/image_class_labels.txt'
 im_path = '/media/evl/Public/Mahyar/Data/CVPRdata/CUB_200_2011/CUB_200_2011/images.txt'
 split_path = '/media/evl/Public/Mahyar/Data/CVPRdata/splits/train_test_split.mat'
-parse_path = '/media/evl/Public/Mahyar/Data/CVPRdata/sps2_clean'
-batch_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches13'
-output_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches13'
-log_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches13'
+parse_path = '/media/evl/Public/Mahyar/Data/CVPRdata/sps2_none'
+batch_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches17'
+output_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches17'
+log_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches17'
 
 freq_dict = defaultdict(lambda: defaultdict(int))
 train_idf_dict = dict()
@@ -124,7 +124,7 @@ def create_db_cub():
 ###=======================NEG SAMPLING=========================###
 NEG_SAMPLE = 10
 POS_SAMPLE = 10
-TEST_SAMPLE = 20
+TEST_SAMPLE = 100
 
 def normalize_features(pathname, data):
     # This is original calculation from training (***hardcode***)    
@@ -417,6 +417,7 @@ def make_batch_train_man(data, batch_size, fpath, idf_list):
         for idx, d in enumerate(batch_data):
             for ps in range(POS_SAMPLE):
                 if ps >= len(batch_pos[idx]):
+                    assert (False), 'Not enough positive sample parses:' + d['name'] + '>>>' + str(len(batch_pos[idx]))
                     break
                 batch_output.append({'image':d['name'].split('/')[-1]+'.jpg.npz',
                                   'parse':batch_pos[idx][ps][0],
@@ -429,6 +430,7 @@ def make_batch_train_man(data, batch_size, fpath, idf_list):
                                   'question':batch_negs[idx][ns][1], 'answer': 'no',
                                   'cname':d['cname'], 'cid':d['cid'],
                                   'sent_cid':0, 'sent_cname':'unknown'})
+
         
         with open(fpath+'/batch_'+str(batch_id)+'.json', 'w+') as fj:
             json.dump(batch_output, fj, indent=4)
@@ -567,6 +569,8 @@ def make_batch_test(data, batch_size, fpath, idf_dict, sample_size=0):
                 class_parses_scores[c].append(score)
             if len(class_parses_sorted[c]) >= TEST_SAMPLE:
                 break
+        else:
+            assert (False), 'Not enough parses for class: '+str(c)
         for batch_head in range(0, sample_size, batch_size):
             print('AT BATCH >> '+ str(batch_id))
             batch_end = batch_head + batch_size

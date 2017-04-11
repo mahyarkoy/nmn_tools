@@ -2,7 +2,7 @@
 # Author info: Mahyar Khayatkhoei @ m.khayatkhoei@gmail.com
 set -o errexit
 READ_PATH=/media/evl/Public/Mahyar/Data/CVPRdata/text_c10/*/*.txt
-WRITE_PATH=/media/evl/Public/Mahyar/Data/CVPRdata/sps2_clean
+WRITE_PATH=/media/evl/Public/Mahyar/Data/CVPRdata/sps2_none
 
 counter=0
 trap "exit" INT

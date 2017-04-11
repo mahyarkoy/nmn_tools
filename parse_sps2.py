@@ -79,6 +79,11 @@ class ParseDB:
 	def preproc_rels(self, rel):
 		rel_list = list()
 		for w in rel:
+			### skip hyphone break
+			rel_list.append(w)
+			continue
+
+			### Break hyphoned words into two parts
 			hm = hyphoned.match(w)
 			if hm:
 				wl, wr = hm.group(0).split('-')
@@ -86,9 +91,10 @@ class ParseDB:
 				rel_list += [wr, wl]
 			else:
 				rel_list.append(w)
-
-		for w_i, w in enumerate(rel_list):
-			rel_list[w_i] = spell_check.correct(w)
+				
+		### Spell check
+		#for w_i, w in enumerate(rel_list):
+		#	rel_list[w_i] = spell_check.correct(w)
 
 		return tuple(rel_list)
 

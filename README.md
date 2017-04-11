@@ -38,3 +38,7 @@ ex_generator.py
 ------
 code for generating negative examples (from cluster_info.pk) by olivia. (modified for minor fixes)
 
+check_sps2.py
+------
+goes over the files parsed from sentence to sps2 format, and provides some statistics on the generated parse data set.
+

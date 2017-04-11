@@ -265,7 +265,7 @@ p_x_f = np.diag(p_y_x_f)
 p_y_x = freq_mat_total / aug_n_x
 p_y_x[range(p_y_x.shape[0]), range(p_y_x.shape[0])] = 0
 h_y_x = -1.0 * np.log2(p_y_x+bias_denum).dot(p_y_x.transpose())
-h_x = np.diag(h_y_x)
+h_x = np.diag(h_y_x)# / n_x[:,0]
 
 concat = np.asarray([p_x_f,h_x])
 cov_mat = np.cov(concat)
@@ -315,7 +315,7 @@ for i, v in enumerate(parse_db_vals):
             parse_freq[j,i] = v['count']
 
 parse_freq_diag = np.diag(parse_freq)
-parse_var = 1 - parse_freq_diag * 1.0 / np.sum(parse_freq, axis=1)
+parse_var = 1 - parse_freq_diag * 1.0 / np.sum(parse_freq, axis=1)# / parse_freq_diag
 ### correlation
 parse_concat = np.asarray([parse_err, parse_var])
 parse_cov_mat = np.cov(parse_concat)
