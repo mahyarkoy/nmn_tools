@@ -13,11 +13,12 @@ import matplotlib.ticker as ticker
 import cPickle as cpk
 import glob
 
-testid = 41
-jdata_path = '/media/evl/Public/Mahyar/Data/CVPRdata/results41/logs/preds/test_predictions_5/*.json'
+testid = 46
+jdata_path = '/media/evl/Public/Mahyar/Data/CVPRdata/results46/logs/preds/test_predictions_5/*.json'
+#jdata_path = '/home/mahyar/CV_Res/koynmn/nmn2/logs/preds/test_predictions_5/*.json'
 jclass_parse_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches12/test_class_parses_2933.json'
 im_db = defaultdict(lambda: defaultdict(list))
-ann_db = dict()
+ann_db = dict() 
 pred_db = dict()
 weighted_classify = False
 
@@ -27,7 +28,7 @@ Input: a dict with class id as keys and list of (weight,score) as values
 Output: top class id with highest score
 '''
 def find_prediction(pred):
-    top = 1    
+    top = 1   
     #top_choice = 15
     res = list()
     pred_list = pred.items()
@@ -129,7 +130,7 @@ Plotting the confusion matrix.
 '''
 fig = plt.figure(figsize=(12,10))
 ax = fig.add_subplot(111)
-cax = ax.matshow(cmat)#, cmap='hot')
+cax = ax.matshow(cmat, cmap='jet')
 fig.colorbar(cax)
 
 ax.set_xticklabels([0]+class_list, rotation=90)
@@ -139,7 +140,7 @@ ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
 ax.yaxis.set_major_locator(ticker.MultipleLocator(1))
 ax.tick_params(axis='both', which='major', labelsize=6)
 ax.tick_params(axis='both', which='minor', labelsize=6)
-plt.grid(True, which='both')
+plt.grid(True, which='both', linestyle='dotted')
 plt.title('Confusion Matrix')
 plt.xlabel('Prediction')
 plt.ylabel('True')

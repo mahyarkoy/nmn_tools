@@ -16,11 +16,11 @@ import random
 classes_path = '/media/evl/Public/Mahyar/Data/CVPRdata/CUB_200_2011/CUB_200_2011/classes.txt'
 im_class_path = '/media/evl/Public/Mahyar/Data/CVPRdata/CUB_200_2011/CUB_200_2011/image_class_labels.txt'
 im_path = '/media/evl/Public/Mahyar/Data/CVPRdata/CUB_200_2011/CUB_200_2011/images.txt'
-split_path = '/media/evl/Public/Mahyar/Data/CVPRdata/splits/train_test_split.mat'
+split_path = '/media/evl/Public/Mahyar/Data/CVPRdata/splits/train_test_split_hard.mat'
 parse_path = '/media/evl/Public/Mahyar/Data/CVPRdata/sps2_none'
-batch_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches17'
-output_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches17'
-log_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches17'
+batch_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches18'
+output_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches18'
+log_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches18'
 
 freq_dict = defaultdict(lambda: defaultdict(int))
 train_idf_dict = dict()
