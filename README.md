@@ -42,3 +42,11 @@ check_sps2.py
 ------
 goes over the files parsed from sentence to sps2 format, and provides some statistics on the generated parse data set.
 
+extract_vgg_cv.py
+------
+uses caffe to run vgg 16 forward pass on images and extract pool 5 layer features. has batching and uses opencv.
+
+im_aug.py
+------
+horizontally flips images on the given path, and save alongside original images in a given output path.
+
