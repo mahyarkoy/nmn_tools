@@ -13,14 +13,20 @@ import matplotlib.ticker as ticker
 import cPickle as cpk
 import glob
 
-testid = 46
-jdata_path = '/media/evl/Public/Mahyar/Data/CVPRdata/results46/logs/preds/test_predictions_5/*.json'
+testname = 'gan_count_2'
+#jdata_path = '/home/mahyar/cub_data/stack_gan_logs/logs/*.json'
+#jdata_path = '/home/mahyar/CV_Res/nmn2/logs/preds/test_predictions_10/*.json'
+#jdata_path = '/media/mahyar/My Passport/mahyar/gan_logs_1/logs/*.json'
+jdata_path = '/home/mahyar/gan_logs_1/logs/*.json'
+#jdata_path = '/media/evl/Public/Mahyar/Data/CVPRdata/results46/logs/preds/test_predictions_5/*.json'
 #jdata_path = '/home/mahyar/CV_Res/koynmn/nmn2/logs/preds/test_predictions_5/*.json'
 jclass_parse_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches12/test_class_parses_2933.json'
 im_db = defaultdict(lambda: defaultdict(list))
 ann_db = dict() 
 pred_db = dict()
 weighted_classify = False
+res_db = dict()
+ignore_list = [4, 9, 14, 29, 138, 38, 121, 166]
 
 '''
 Calculates top prediction class ids, among a set of class scores for a given image.
@@ -28,7 +34,7 @@ Input: a dict with class id as keys and list of (weight,score) as values
 Output: top class id with highest score
 '''
 def find_prediction(pred):
-    top = 1   
+    top = 10
     #top_choice = 15
     res = list()
     pred_list = pred.items()
@@ -39,9 +45,9 @@ def find_prediction(pred):
             continue
         #use top_choices to filter out noise, not useful currently
         wval = [v[0]*v[1] for v in val]
-        wval.sort()
-        vec = np.asarray(wval)
-        res.append(np.mean(vec))
+        #wval.sort()
+        vec = np.asarray(wval > 0)
+        res.append(np.sum(vec))
     cid = np.argsort(res)[::-1][0:top]
     #cid = np.random.choice(len(res),top)
     out = [pred_list[x][0] for x in cid.tolist()]
@@ -90,6 +96,36 @@ for jpath in glob.glob(jdata_path):
             ann_db[imn] = imc
             class_set.add(imc)
 
+print ">>> Class stats:"
+print ">>>>>> num images: ", len(im_db.keys())
+print ">>>>>> num text: ", np.asarray(im_db.values()).shape
+
+'''Native accuracy'''
+acc_db = defaultdict(list)
+for imn, res in im_db.items():
+    for sc, vals in res.items():
+        key = 1 if sc == ann_db[imn] else -1
+        acc_db[sc].append(np.mean([v[0]*key>0 for v in vals]))
+acc_mat = np.array(acc_db.values())
+acc_mean = np.mean(acc_mat,axis=1)
+acc_std = np.std(acc_mat, axis=1)
+sort_ids = np.argsort(acc_db.keys())
+
+fig = plt.figure(figsize=(12,10))
+ax = fig.add_subplot(111)
+ax.set_ylabel('Accuracy')
+ax.set_title('Native Accuracy of ZSL')
+#ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
+ax.set_xticks(np.arange(50))
+ax.tick_params(axis='x', which='major', labelsize=6)
+ax.tick_params(axis='x', which='minor', labelsize=6)
+ax.set_xticklabels(np.sort(acc_db.keys()))
+bar1 = ax.bar(np.arange(len(acc_db)), acc_mean[sort_ids], yerr=acc_std[sort_ids])
+plt.grid(True, which='both', linestyle='dotted')
+plt.savefig('/home/mahyar/plots/native_acc_'+str(testname)+'.png')
+vvv = ax.get_xticks()
+print vvv
+
 '''
 Initializes class sorted list and confusion matrix
 '''
@@ -109,20 +145,22 @@ Calculates predictions and fills the confusion matrix.
 '''
 print "Filling cmat"            
 for im, pred in im_db.items():
+    if ann_db[im] in ignore_list:
+        continue
     preds, res = find_prediction(pred)
     pred_db[im] = preds
+    res_db[im] = res
     gt = class_db[ann_db[im]]
     for p in preds:
-        pc = class_db[p]
-        cmat[gt, pc] += 1
-        if p == ann_db[im]:
-            acc += 1
+        if p in ignore_list:
+            continue
+        else:
+            pc = class_db[p]
+            cmat[gt, pc] += 1
             break
 
 total = len(im_db.keys())
-accuracy = acc / float(total)
 print 'THIS IS HOW ACCURATE: '
-print accuracy
 print np.trace(cmat)*1.0 / total
 
 '''
@@ -144,8 +182,8 @@ plt.grid(True, which='both', linestyle='dotted')
 plt.title('Confusion Matrix')
 plt.xlabel('Prediction')
 plt.ylabel('True')
-plt.savefig('/home/mahyar/confmat_'+str(testid)+'.pdf')
-plt.savefig('/home/mahyar/confmat_'+str(testid)+'.png')
+#plt.savefig('/home/mahyar/plots/confmat_'+str(testname)+'.pdf')
+plt.savefig('/home/mahyar/plots/confmat_'+str(testname)+'.png')
 '''
 ### Example for sample display of a random normal
 x = np.random.randn(1000)
@@ -153,3 +191,4 @@ y = np.random.randn(1000)+5
 plt.hist2d(x, y, bins=40, cmap='hot')
 plt.colorbar()
 '''
+#138.Tree_Swallow/Tree_Swallow_0023_135345

@@ -12,7 +12,9 @@ import json
 import glob
 import os
 import random
+import sys
 
+'''
 classes_path = '/media/evl/Public/Mahyar/Data/CVPRdata/CUB_200_2011/CUB_200_2011/classes.txt'
 im_class_path = '/media/evl/Public/Mahyar/Data/CVPRdata/CUB_200_2011/CUB_200_2011/image_class_labels.txt'
 im_path = '/media/evl/Public/Mahyar/Data/CVPRdata/CUB_200_2011/CUB_200_2011/images.txt'
@@ -21,6 +23,16 @@ parse_path = '/media/evl/Public/Mahyar/Data/CVPRdata/sps2_none'
 batch_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches18'
 output_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches18'
 log_path = '/media/evl/Public/Mahyar/Data/CVPRdata/batches18'
+'''
+
+classes_path = '/home/mahyar/cub_data/CUB_200_2011/CUB_200_2011/classes.txt'
+im_class_path = '/home/mahyar/cub_data/CUB_200_2011/CUB_200_2011/image_class_labels.txt'
+im_path = '/home/mahyar/cub_data/CUB_200_2011/CUB_200_2011/images.txt'
+split_path = '/home/mahyar/cub_data/train_test_split.mat'
+parse_path = '/home/mahyar/cub_data/sps2_none'
+batch_path = '/home/mahyar/cub_data/cub_batches_1'
+output_path = '/home/mahyar/cub_data/cub_batches_1'
+log_path = '/home/mahyar/cub_data/cub_batches_1'
 
 freq_dict = defaultdict(lambda: defaultdict(int))
 train_idf_dict = dict()
@@ -146,7 +158,7 @@ def normalize_features(pathname, data):
     std = np.sqrt(var)
 
     # Save the mean std to file for future use (***hardcode***)
-    np.savez('/media/evl/Public/Mahyar/Data/CVPRdata/normalizer_data_aug_hard.npz', mean=mean, std=std)    
+    np.savez('/home/mahyar/cub_data/normalizer_data_cub.npz', mean=mean, std=std)    
       
 def shuffle_list(parse_list):
     res = list(parse_list)
@@ -608,11 +620,15 @@ def select_parses(data_list, idf_dict):
     
 if __name__ == '__main__':
     batch_size = 10
-    num_itr = 100
+    num_itr = 50
     ### Read train and test set data
     train_set, test_set = create_db_cub()
     #selected_parses_test = select_parses(test_set, test_idf_dict)
-    
+    #normalize_features('/media/evl/Public/Mahyar/Data/CVPRdata/CUB_200_2011/CUB_200_2011/convs_aug', train_set)
+    normalize_features('/home/mahyar/cub_data/CUB_200_2011/CUB_200_2011/conv_aug_bb', train_set)
+    print '>>> NORMALIZATION DONE'
+    sys.exit()
+
     ### All adjectives
     #adj_set = set()
     #parse_set = set()
@@ -685,8 +701,6 @@ if __name__ == '__main__':
         os.system('mkdir ' + fpath_train)
         #make_batch_train_contrastive(data_train, batch_size*1, fpath_train, train_idf_dict)
         make_batch_train_man(data_train, batch_size, fpath_train, train_idf_dict)
-
-    #normalize_features('/media/evl/Public/Mahyar/Data/CVPRdata/CUB_200_2011/CUB_200_2011/convs_aug', train_set)
 
 
 
